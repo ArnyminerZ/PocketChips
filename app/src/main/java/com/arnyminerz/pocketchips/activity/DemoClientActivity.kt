@@ -1,6 +1,9 @@
 package com.arnyminerz.pocketchips.activity
 
+import android.graphics.drawable.AnimatedImageDrawable
+import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
+import android.view.animation.AnimationUtils
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -28,6 +31,8 @@ class DemoClientActivity : AppCompatActivity() {
                 it.lifecycleOwner = this
                 it.model = model
             }
+
+        (binding.discoveringIcon.drawable as AnimationDrawable).start()
 
         val availableEndpointsAdapter = AvailableEndpointsAdapter(model)
         binding.availableDevices.layoutManager = LinearLayoutManager(this)

@@ -1,32 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
+
         <variable
             name="device_name"
             type="String" />
+
         <variable
             name="endpoint_id"
             type="String" />
+
         <variable
             name="model"
             type="com.arnyminerz.pocketchips.connections.ClientConnectionsManager" />
     </data>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+        style="@style/Widget.Material3.CardView.Outlined"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        app:cardUseCompatPadding="true">
 
-        <TextView
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{device_name}"/>
+            android:layout_margin="8dp"
+            android:orientation="vertical">
 
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="@{() -> model.requestConnection(endpoint_id)}"
-            android:text="Request connection" />
+            <TextView
+                style="@style/TextAppearance.Material3.TitleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginVertical="4dp"
+                android:text="@{device_name, default=DeviceName}" />
 
-    </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> model.requestConnection(endpoint_id)}"
+                android:text="Request connection" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
 </layout>

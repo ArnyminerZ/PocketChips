@@ -4,13 +4,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        style="@style/Widget.Material3.Button.OutlinedButton"
         android:id="@+id/launch_client"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Client"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        style="@style/Widget.Material3.Button.OutlinedButton"
         android:id="@+id/launch_host"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
