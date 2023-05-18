@@ -47,5 +47,34 @@
             android:text="Advertising..."
             android:visibility="@{model.isAdvertising() ? View.VISIBLE : View.GONE}" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Available devices" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/available_devices"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Connected devices" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/connected_devices"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:text="Launch App" />
+
     </LinearLayout>
 </layout>

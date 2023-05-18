@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="device_name"
+            type="String" />
+        <variable
+            name="endpoint_id"
+            type="String" />
+        <variable
+            name="model"
+            type="com.arnyminerz.pocketchips.viewmodel.ConnectionsHostViewModel" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{device_name}"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="@{() -> model.authorizeAwaiting(endpoint_id)}"
+                android:text="Accept" />
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="@{() -> model.rejectAwaiting(endpoint_id)}"
+                android:text="Reject" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>
