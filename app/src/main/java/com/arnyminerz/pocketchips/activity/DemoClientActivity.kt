@@ -9,13 +9,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.arnyminerz.pocketchips.R
 import com.arnyminerz.pocketchips.connections.ClientConnectionsManager
 import com.arnyminerz.pocketchips.connections.ConnectionsManager
-import com.arnyminerz.pocketchips.connections.HostConnectionsManager
-import com.arnyminerz.pocketchips.databinding.DemoHostActivityBinding
-import com.arnyminerz.pocketchips.ui.list.AwaitingEndpointsAdapter
-import com.arnyminerz.pocketchips.ui.list.ConnectedEndpointsAdapter
+import com.arnyminerz.pocketchips.databinding.DemoClientActivityBinding
+import com.arnyminerz.pocketchips.ui.list.AvailableEndpointsAdapter
 
-class DemoHostActivity : AppCompatActivity() {
-    private val model: HostConnectionsManager by viewModels()
+class DemoClientActivity : AppCompatActivity() {
+    private val model: ClientConnectionsManager by viewModels()
 
     private val permissionRequestLauncher = registerForActivityResult(RequestMultiplePermissions()) {
         model.allPermissionsGranted.postValue(it.all { (_, granted) -> granted })
@@ -25,25 +23,18 @@ class DemoHostActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         val binding = DataBindingUtil
-            .setContentView<DemoHostActivityBinding>(this, R.layout.demo_host_activity)
+            .setContentView<DemoClientActivityBinding>(this, R.layout.demo_client_activity)
             .also {
                 it.lifecycleOwner = this
                 it.model = model
             }
 
-        val availableDevicesAdapter = AwaitingEndpointsAdapter(model)
+        val availableEndpointsAdapter = AvailableEndpointsAdapter(model)
         binding.availableDevices.layoutManager = LinearLayoutManager(this)
-        binding.availableDevices.adapter = availableDevicesAdapter
+        binding.availableDevices.adapter = availableEndpointsAdapter
 
-        val connectedDevicesAdapter = ConnectedEndpointsAdapter()
-        binding.connectedDevices.layoutManager = LinearLayoutManager(this)
-        binding.connectedDevices.adapter = connectedDevicesAdapter
-
-        model.awaitingEndpoints.observe(this) {
-            availableDevicesAdapter.submitList(it.toList())
-        }
-        model.connectedEndpoints.observe(this) { map ->
-            connectedDevicesAdapter.submitList(map.map { it.key })
+        model.availableEndpoints.observe(this) {
+            availableEndpointsAdapter.submitList(it.toList())
         }
 
         model.allPermissionsGranted.observe(this) { granted ->

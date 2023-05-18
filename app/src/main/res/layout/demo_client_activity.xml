@@ -7,7 +7,7 @@
 
         <variable
             name="model"
-            type="com.arnyminerz.pocketchips.connections.HostConnectionsManager" />
+            type="com.arnyminerz.pocketchips.connections.ClientConnectionsManager" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".activity.DemoHostActivity">
+        tools:context=".activity.DemoClientActivity">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,25 +27,25 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:enabled="@{!model.isAdvertising() &amp;&amp; model.allPermissionsGranted &amp;&amp; !model.operationPending}"
-                android:onClick="@{() -> model.startAdvertising()}"
-                android:text="Start Advertising" />
+                android:enabled="@{!model.isDiscovering() &amp;&amp; model.allPermissionsGranted &amp;&amp; !model.operationPending}"
+                android:onClick="@{() -> model.startDiscovery()}"
+                android:text="Start Discovery" />
 
             <com.google.android.material.button.MaterialButton
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:enabled="@{model.isAdvertising() &amp;&amp; model.allPermissionsGranted &amp;&amp; !model.operationPending}"
-                android:onClick="@{() -> model.stopAdvertising()}"
-                android:text="Stop Advertising" />
+                android:enabled="@{model.isDiscovering() &amp;&amp; model.allPermissionsGranted &amp;&amp; !model.operationPending}"
+                android:onClick="@{() -> model.stopDiscovery()}"
+                android:text="Stop Discovery" />
         </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Advertising..."
-            android:visibility="@{model.isAdvertising() ? View.VISIBLE : View.GONE}" />
+            android:text="Discovering..."
+            android:visibility="@{model.isDiscovering() ? View.VISIBLE : View.GONE}" />
 
         <TextView
             android:layout_width="match_parent"
@@ -61,13 +61,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Connected devices" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/connected_devices"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:text="@{model.connectedToInfo.endpointName}"/>
 
         <com.google.android.material.button.MaterialButton
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"

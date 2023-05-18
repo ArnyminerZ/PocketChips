@@ -9,7 +9,7 @@
             type="String" />
         <variable
             name="model"
-            type="com.arnyminerz.pocketchips.viewmodel.ConnectionsHostViewModel" />
+            type="com.arnyminerz.pocketchips.connections.HostConnectionsManager" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
