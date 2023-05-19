@@ -99,3 +99,27 @@ fun ConnectionsClient.sendPayload(endpointIds: List<String>, serializedObject: S
     val payload = Payload.fromBytes(serializedObject.bytes)
     return sendPayload(endpointIds, payload)
 }
+
+/**
+ * Sends a [Payload] to a remote endpoint. Payloads can only be sent to remote endpoints once a
+ * notice of connection acceptance has been delivered via
+ * [ConnectionLifecycleCallback.onConnectionResult].
+ *
+ * Possible result status codes include:
+ * - [ConnectionsStatusCodes.STATUS_OUT_OF_ORDER_API_CALL] if the device has not first performed
+ *   advertisement or discovery (to set the Strategy).
+ * - [ConnectionsStatusCodes.STATUS_ENDPOINT_UNKNOWN] if there's no active (or pending) connection
+ *   to the remote endpoint.
+ * - [ConnectionsStatusCodes.STATUS_OK] if none of the above errors occurred. Note that this
+ *   indicates that Nearby Connections will attempt to send the Payload, but not that the send has
+ *   successfully completed yet. Errors might still occur during transmission (and at different
+ *   times for different endpoints), and will be delivered via
+ *   [PayloadCallback.onPayloadTransferUpdate].
+ * @param endpointId The identifier for the remote endpoints to which the payload should be sent.
+ * @param serializedObject The Payload to be sent.
+ * @return [Task] to access the status of the operation when available.
+ */
+fun ConnectionsClient.sendPayload(endpointId: String, serializedObject: SerializedObject): Task<Void> {
+    val payload = Payload.fromBytes(serializedObject.bytes)
+    return sendPayload(endpointId, payload)
+}
