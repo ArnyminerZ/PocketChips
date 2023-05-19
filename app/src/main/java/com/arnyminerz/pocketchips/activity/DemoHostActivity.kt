@@ -10,6 +10,7 @@ import com.arnyminerz.pocketchips.R
 import com.arnyminerz.pocketchips.connections.ConnectionsManager
 import com.arnyminerz.pocketchips.connections.HostConnectionsManager
 import com.arnyminerz.pocketchips.databinding.DemoHostActivityBinding
+import com.arnyminerz.pocketchips.game.GameSettings
 import com.arnyminerz.pocketchips.ui.list.AwaitingEndpointsAdapter
 import com.arnyminerz.pocketchips.ui.list.ConnectedEndpointsAdapter
 
@@ -22,6 +23,9 @@ class DemoHostActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Set some default values for GameSettings
+        model.gameSettings = GameSettings()
 
         val binding = DataBindingUtil
             .setContentView<DemoHostActivityBinding>(this, R.layout.demo_host_activity)

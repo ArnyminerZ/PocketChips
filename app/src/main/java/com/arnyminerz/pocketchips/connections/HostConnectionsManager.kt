@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import com.arnyminerz.pocketchips.communications.Serializable
 import com.arnyminerz.pocketchips.communications.SerializedObject
 import com.arnyminerz.pocketchips.communications.sendPayload
+import com.arnyminerz.pocketchips.game.GameSettings
 import com.arnyminerz.pocketchips.utils.async
 import com.arnyminerz.pocketchips.utils.context
 import com.arnyminerz.pocketchips.utils.get
@@ -27,7 +28,7 @@ import java.util.concurrent.locks.ReentrantLock
  * Provides some utility functions to help interacting with the Nearby Connections API.
  * @see <a href="https://developers.google.com/nearby/connections/overview">Documentation</a>
  */
-class HostConnectionsManager(application: Application): ConnectionsManager(application) {
+class HostConnectionsManager(application: Application) : ConnectionsManager(application) {
     companion object {
         private const val TAG = "HostConnectionsManager"
     }
@@ -35,10 +36,13 @@ class HostConnectionsManager(application: Application): ConnectionsManager(appli
     /** Provides access to the Nearby Connections API lazily. */
     private val connectionsClient by lazy { Nearby.getConnectionsClient(context) }
 
-    private val connectionLifecycleCallback = object: ConnectionLifecycleCallback() {
+    private val connectionLifecycleCallback = object : ConnectionLifecycleCallback() {
         override fun onConnectionInitiated(endpointId: String, connectionInfo: ConnectionInfo) {
             // Add the endpoint to awaitingEndpoints
-            Log.i(TAG, "Initiated connection to endpoint $endpointId. Name = ${connectionInfo.endpointName}")
+            Log.i(
+                TAG,
+                "Initiated connection to endpoint $endpointId. Name = ${connectionInfo.endpointName}"
+            )
             addAwaiting(endpointId, connectionInfo)
         }
 
@@ -49,15 +53,20 @@ class HostConnectionsManager(application: Application): ConnectionsManager(appli
                     Log.i(TAG, "Connected with endpoint $endpointId!")
                     addConnected(endpointId)
                 }
+
                 ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
                     // Remove from connected just in case
                     Log.i(TAG, "Connection with endpoint $endpointId rejected!")
                     removeConnected(endpointId)
                 }
+
                 ConnectionsStatusCodes.STATUS_ERROR -> {
                     // TODO: Create holder for error messages
                     // Remove from connected just in case
-                    Log.e(TAG, "Could not connect with $endpointId. Error: ${result.status.statusMessage}")
+                    Log.e(
+                        TAG,
+                        "Could not connect with $endpointId. Error: ${result.status.statusMessage}"
+                    )
                     removeConnected(endpointId)
                 }
             }
@@ -87,11 +96,14 @@ class HostConnectionsManager(application: Application): ConnectionsManager(appli
     /** Locks [awaitingEndpointsMutable] so that multiple threads don't update the value at the same time. */
     private val awaitingEndpointsLock = ReentrantLock()
     private val awaitingEndpointsMutable = MutableLiveData<Map<String, ConnectionInfo>>()
+
     /** Holds the devices that are awaiting for authorization. */
     val awaitingEndpoints: LiveData<Map<String, ConnectionInfo>> get() = awaitingEndpointsMutable
 
     private val connectedEndpointsLock = ReentrantLock()
-    private val connectedEndpointsMutable = MutableLiveData<Map<String, MutableLiveData<ByteArray>>>()
+    private val connectedEndpointsMutable =
+        MutableLiveData<Map<String, MutableLiveData<ByteArray>>>()
+
     /** Holds the devices that have been successfully connected to the device. */
     val connectedEndpoints: LiveData<Map<String, MutableLiveData<ByteArray>>> get() = connectedEndpointsMutable
 
@@ -104,6 +116,8 @@ class HostConnectionsManager(application: Application): ConnectionsManager(appli
     /** Gets called whenever a connected device sends some data. */
     var onPayloadReceived: ((endpointId: String, data: ByteArray) -> Unit)? = null
 
+    var gameSettings: GameSettings? = null
+
 
     /** Adds the given endpoint to [awaitingEndpointsMutable] */
     private fun addAwaiting(endpointId: String, connectionInfo: ConnectionInfo) {
@@ -115,9 +129,10 @@ class HostConnectionsManager(application: Application): ConnectionsManager(appli
         awaitingEndpointsMutable.remove(awaitingEndpointsLock, endpointId)
     }
 
-    /** Adds the given endpoint to [connectedEndpointsMutable] */
+    /** Adds the given endpoint to [connectedEndpointsMutable], then sends all the game information */
     private fun addConnected(endpointId: String) {
         connectedEndpointsMutable.set(awaitingEndpointsLock, endpointId, MutableLiveData())
+        sendPayload(endpointId, gameSettings!!)
     }
 
     /** Removes the given endpoint from [connectedEndpointsMutable] */
@@ -153,18 +168,27 @@ class HostConnectionsManager(application: Application): ConnectionsManager(appli
 
     /**
      * Starts advertising for new devices to connect.
+     * @throws IllegalStateException If [gameSettings] has not been initialized.
      * @see onStartAdvertising
      * @see onStartAdvertisingError
      * @see isAdvertising
      */
     fun startAdvertising() = async {
+        if (gameSettings == null)
+            throw IllegalStateException("Tried to start advertising without initializing gameSettings.")
+
         val advertisingOptions = AdvertisingOptions.Builder()
             .setStrategy(STRATEGY)
             .build()
 
         operationPendingMutable.postValue(true)
         connectionsClient
-            .startAdvertising(getName(), SERVICE_ID, connectionLifecycleCallback, advertisingOptions)
+            .startAdvertising(
+                getName(),
+                SERVICE_ID,
+                connectionLifecycleCallback,
+                advertisingOptions
+            )
             .addOnSuccessListener { onStartAdvertising() }
             .addOnFailureListener { onStartAdvertisingError(it) }
     }
@@ -193,6 +217,15 @@ class HostConnectionsManager(application: Application): ConnectionsManager(appli
     }
 
     /**
+     * Sends the given payload to given connected device.
+     */
+    fun sendPayload(endpointId: String, bytes: ByteArray) {
+        val payload = Payload.fromBytes(bytes)
+        Log.d(TAG, "Sending payload to endpoint ($endpointId): $bytes")
+        connectionsClient.sendPayload(endpointId, payload)
+    }
+
+    /**
      * Sends the given payload to all the connected devices.
      * @throws IllegalStateException If there are no connected devices.
      */
@@ -207,10 +240,25 @@ class HostConnectionsManager(application: Application): ConnectionsManager(appli
     }
 
     /**
+     * Sends the given payload to given connected device.
+     */
+    fun sendPayload(endpointId: String, serializedObject: SerializedObject) {
+        Log.d(TAG, "Sending payload to endpoint ($endpointId)")
+        connectionsClient.sendPayload(endpointId, serializedObject)
+    }
+
+    /**
      * Sends the given payload to all the connected devices.
      * @throws IllegalStateException If there are no connected devices.
      */
     fun sendPayload(obj: Serializable) {
         sendPayload(obj.serialize())
+    }
+
+    /**
+     * Sends the given payload to given connected device.
+     */
+    fun sendPayload(endpointId: String, obj: Serializable) {
+        sendPayload(endpointId, obj.serialize())
     }
 }
