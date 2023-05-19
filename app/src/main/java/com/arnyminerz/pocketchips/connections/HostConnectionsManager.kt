@@ -4,6 +4,9 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.arnyminerz.pocketchips.communications.Serializable
+import com.arnyminerz.pocketchips.communications.SerializedObject
+import com.arnyminerz.pocketchips.communications.sendPayload
 import com.arnyminerz.pocketchips.utils.async
 import com.arnyminerz.pocketchips.utils.context
 import com.arnyminerz.pocketchips.utils.get
@@ -187,5 +190,27 @@ class HostConnectionsManager(application: Application): ConnectionsManager(appli
         val endpointIds = endpoints.keys.toList()
         Log.d(TAG, "Sending payload to endpoints ($endpointIds): $bytes")
         connectionsClient.sendPayload(endpointIds, payload)
+    }
+
+    /**
+     * Sends the given payload to all the connected devices.
+     * @throws IllegalStateException If there are no connected devices.
+     */
+    fun sendPayload(serializedObject: SerializedObject) {
+        val endpoints = connectedEndpointsMutable.get(connectedEndpointsLock)
+        if (endpoints?.isNotEmpty() != true)
+            throw IllegalStateException("Currently there are no connected devices. Payload cannot be sent.")
+
+        val endpointIds = endpoints.keys.toList()
+        Log.d(TAG, "Sending payload to endpoints ($endpointIds)")
+        connectionsClient.sendPayload(endpointIds, serializedObject)
+    }
+
+    /**
+     * Sends the given payload to all the connected devices.
+     * @throws IllegalStateException If there are no connected devices.
+     */
+    fun sendPayload(obj: Serializable) {
+        sendPayload(obj.serialize())
     }
 }
