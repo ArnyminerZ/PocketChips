@@ -1,7 +1,10 @@
+import org.jetbrains.dokka.gradle.DokkaTask
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
+    id("org.jetbrains.dokka")
 }
 
 android {
@@ -37,6 +40,15 @@ android {
     buildFeatures {
         buildConfig = true
         dataBinding = true
+    }
+}
+
+tasks.withType<DokkaTask>().configureEach {
+    dokkaSourceSets {
+        configureEach {
+            // Enable Android
+            noAndroidSdkLink.set(false)
+        }
     }
 }
 
