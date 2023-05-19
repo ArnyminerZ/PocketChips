@@ -40,7 +40,7 @@
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:enabled="@{!model.operationPending}"
+                android:enabled="@{!model.operationPending &amp;&amp; model.requestingConnectionTo == null}"
                 android:onClick="@{() -> model.requestConnection(endpoint_id)}"
                 android:text="Request connection" />
 

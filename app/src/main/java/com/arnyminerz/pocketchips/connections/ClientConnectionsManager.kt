@@ -48,6 +48,7 @@ class ClientConnectionsManager(application: Application) : ConnectionsManager(ap
             Log.i(TAG, "Initiated connection to endpoint $endpointId. Name = ${connectionInfo.endpointName}")
             connectionsClient.acceptConnection(endpointId, payloadCallback)
             connectedToInfoMutable.postValue(connectionInfo)
+            requestingConnectionToMutable.postValue(endpointId)
         }
 
         override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
@@ -56,6 +57,7 @@ class ClientConnectionsManager(application: Application) : ConnectionsManager(ap
                     Log.i(TAG, "Connected to endpoint $endpointId!")
                     availableEndpointsMutable.remove(availableEndpointsLock, endpointId)
                     connectedToMutable.postValue(endpointId)
+                    requestingConnectionToMutable.postValue(null)
 
                     // Once connected, stop discovery
                     stopDiscovery()
@@ -65,6 +67,7 @@ class ClientConnectionsManager(application: Application) : ConnectionsManager(ap
                     Log.i(TAG, "Connection to endpoint $endpointId rejected!")
                     connectedToMutable.postValue(null)
                     connectedToInfoMutable.postValue(null)
+                    requestingConnectionToMutable.postValue(null)
                 }
 
                 ConnectionsStatusCodes.STATUS_ERROR -> {
@@ -72,6 +75,7 @@ class ClientConnectionsManager(application: Application) : ConnectionsManager(ap
                     Log.e(TAG, "Could not connect to $endpointId. Error: ${result.status.statusMessage}")
                     connectedToMutable.postValue(null)
                     connectedToInfoMutable.postValue(null)
+                    requestingConnectionToMutable.postValue(null)
                 }
             }
         }
@@ -80,6 +84,7 @@ class ClientConnectionsManager(application: Application) : ConnectionsManager(ap
             Log.w(TAG, "Disconnected from $endpointId")
             connectedToMutable.postValue(null)
             connectedToInfoMutable.postValue(null)
+            requestingConnectionToMutable.postValue(null)
         }
     }
 
@@ -119,6 +124,9 @@ class ClientConnectionsManager(application: Application) : ConnectionsManager(ap
     private val connectedToMutable = MutableLiveData<String?>()
     val connectedTo: LiveData<String?> get() = connectedToMutable
 
+    private val requestingConnectionToMutable = MutableLiveData<String?>()
+    val requestingConnectionTo: LiveData<String?> get() = requestingConnectionToMutable
+
     private val connectedToInfoMutable = MutableLiveData<ConnectionInfo?>()
     val connectedToInfo: LiveData<ConnectionInfo?> get() = connectedToInfoMutable
 
@@ -130,12 +138,14 @@ class ClientConnectionsManager(application: Application) : ConnectionsManager(ap
     fun onRequestedConnection(endpointId: String) {
         Log.i(TAG, "Requested connection to $endpointId")
         operationPendingMutable.postValue(false)
+        requestingConnectionToMutable.postValue(endpointId)
     }
 
     /** Gets called when the device requests connection to another one. */
     fun onRequestedConnectionError(endpointId: String, error: Exception) {
         Log.i(TAG, "Could not request connection to $endpointId.", error)
         operationPendingMutable.postValue(false)
+        requestingConnectionToMutable.postValue(null)
     }
 
     fun requestConnection(endpointId: String) = async {
