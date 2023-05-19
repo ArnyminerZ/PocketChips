@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.arnyminerz.pocketchips.R
-import com.arnyminerz.pocketchips.connections.ClientConnectionsManager
 import com.arnyminerz.pocketchips.connections.ConnectionsManager
 import com.arnyminerz.pocketchips.connections.HostConnectionsManager
 import com.arnyminerz.pocketchips.databinding.DemoHostActivityBinding

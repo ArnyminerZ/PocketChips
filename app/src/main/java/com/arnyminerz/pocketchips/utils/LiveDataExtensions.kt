@@ -1,5 +1,6 @@
 package com.arnyminerz.pocketchips.utils
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import java.util.concurrent.locks.Lock
 import kotlin.concurrent.withLock
@@ -25,3 +26,6 @@ fun <K, V> MutableLiveData<Map<K, V>>.remove(lock: Lock, key: K) {
         postValue(map)
     }
 }
+
+/** Fetches the current value of the LiveData using the [lock]. */
+fun <T> LiveData<T>.get(lock: Lock) = lock.withLock { this.value }

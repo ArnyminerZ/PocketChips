@@ -2,11 +2,8 @@ package com.arnyminerz.pocketchips.connections
 
 import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.arnyminerz.pocketchips.storage.PREF_NAME
-import com.arnyminerz.pocketchips.storage.PrefStorage
 import com.arnyminerz.pocketchips.utils.async
 import com.arnyminerz.pocketchips.utils.context
 import com.arnyminerz.pocketchips.utils.get
@@ -21,7 +18,6 @@ import com.google.android.gms.nearby.connection.ConnectionsStatusCodes
 import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.PayloadCallback
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate
-import kotlinx.coroutines.flow.first
 import java.util.concurrent.locks.ReentrantLock
 
 /**
@@ -74,7 +70,9 @@ class HostConnectionsManager(application: Application): ConnectionsManager(appli
         override fun onPayloadReceived(endpointId: String, payload: Payload) {
             if (payload.type == Payload.Type.BYTES) {
                 Log.i(TAG, "Received data from $endpointId.")
-                connectedEndpointsMutable.get(connectedEndpointsLock, endpointId)?.postValue(payload.asBytes())
+                val bytes: ByteArray = payload.asBytes()!!
+                onPayloadReceived?.invoke(endpointId, bytes)
+                connectedEndpointsMutable.get(connectedEndpointsLock, endpointId)?.postValue(bytes)
             }
         }
 
@@ -99,6 +97,9 @@ class HostConnectionsManager(application: Application): ConnectionsManager(appli
 
     private val operationPendingMutable = MutableLiveData(false)
     val operationPending: LiveData<Boolean> get() = operationPendingMutable
+
+    /** Gets called whenever a connected device sends some data. */
+    var onPayloadReceived: ((endpointId: String, data: ByteArray) -> Unit)? = null
 
 
     /** Adds the given endpoint to [awaitingEndpointsMutable] */
@@ -171,5 +172,20 @@ class HostConnectionsManager(application: Application): ConnectionsManager(appli
         connectionsClient.stopAdvertising()
         operationPendingMutable.postValue(false)
         isAdvertisingMutable.postValue(false)
+    }
+
+    /**
+     * Sends the given payload to all the connected devices.
+     * @throws IllegalStateException If there are no connected devices.
+     */
+    fun sendPayload(bytes: ByteArray) {
+        val payload = Payload.fromBytes(bytes)
+        val endpoints = connectedEndpointsMutable.get(connectedEndpointsLock)
+        if (endpoints?.isNotEmpty() != true)
+            throw IllegalStateException("Currently there are no connected devices. Payload cannot be sent.")
+
+        val endpointIds = endpoints.keys.toList()
+        Log.d(TAG, "Sending payload to endpoints ($endpointIds): $bytes")
+        connectionsClient.sendPayload(endpointIds, payload)
     }
 }
