@@ -1,7 +1,7 @@
 name: Build KDoc
 on:
   push:
-    branches: [main]
+    branches: [master]
 jobs:
   build:
     name: Build and publish KDoc
