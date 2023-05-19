@@ -27,7 +27,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:enabled="@{!model.isDiscovering() &amp;&amp; model.allPermissionsGranted &amp;&amp; !model.operationPending}"
+                android:enabled="@{!model.isDiscovering() &amp;&amp; model.allPermissionsGranted &amp;&amp; !model.operationPending &amp;&amp; model.connectedTo == null}"
                 android:onClick="@{() -> model.startDiscovery()}"
                 android:text="Start Discovery" />
 
@@ -36,7 +36,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:enabled="@{model.isDiscovering() &amp;&amp; model.allPermissionsGranted &amp;&amp; !model.operationPending}"
+                android:enabled="@{model.isDiscovering() &amp;&amp; model.allPermissionsGranted &amp;&amp; !model.operationPending &amp;&amp; model.connectedTo == null}"
                 android:onClick="@{() -> model.stopDiscovery()}"
                 android:text="Stop Discovery" />
         </LinearLayout>
