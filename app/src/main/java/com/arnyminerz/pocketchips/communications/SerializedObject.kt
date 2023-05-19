@@ -54,6 +54,16 @@ data class SerializedObject(
      */
     operator fun get(key: String) = data.getValue(key)
 
+    /**
+     * Tries deserializing `this` using the given serializer type. Note that the serializer must
+     * be an Object (`companion object`).
+     */
+    inline fun <T: Any, reified S: Serializer<T>> deserializeOrNull(): T? {
+        // Use reflection to access the companion
+        val serializer = S::class.objectInstance
+        // Run deserialization
+        return serializer?.fromSerializedObject(this)
+    }
 }
 
 /**

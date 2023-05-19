@@ -64,6 +64,9 @@ dependencies {
     // DataStore (preferences storage)
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
+    // Enable Reflection
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.21")
+
 
     // Basic test implementations
     testImplementation("junit:junit:4.13.2")
