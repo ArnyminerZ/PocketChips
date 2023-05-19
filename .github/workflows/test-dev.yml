@@ -1,0 +1,30 @@
+name: Development tests
+on: push
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests without emulator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/gradle-build-action@v2
+
+      - name: Run lint and unit tests
+        run: ./gradlew app:lintStandardDebug app:testStandardDebugUnitTest
+      - name: Archive results
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: |
+            app/build/outputs/lint*
+            app/build/reports
