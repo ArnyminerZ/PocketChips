@@ -1,4 +1,6 @@
 # PocketChips
+![Documentation](https://img.shields.io/github/actions/workflow/status/ArnyminerZ/PocketChips/build-kdoc.yml?label=Documentation&logo=kotlin&style=for-the-badge)
+
 Experience the thrill of poker without physical tokens. Play and bid wirelessly with Pocket Poker
 Connect, an offline Android app that connects devices via Bluetooth. No chips needed, just pure
 poker excitement in the palm of your hand. 
