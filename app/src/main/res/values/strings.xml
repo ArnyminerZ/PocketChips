@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PocketChips</string>
+    <string name="app_name">Pocket Chips</string>
 
     <string name="client_error_not_connected">You must be connected to a host device.</string>
 </resources>
