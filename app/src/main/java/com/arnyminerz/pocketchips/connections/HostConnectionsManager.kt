@@ -6,14 +6,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.arnyminerz.pocketchips.communications.Serializable
 import com.arnyminerz.pocketchips.communications.SerializedObject
+import com.arnyminerz.pocketchips.communications.deserialize
 import com.arnyminerz.pocketchips.communications.sendPayload
 import com.arnyminerz.pocketchips.game.GameSettings
+import com.arnyminerz.pocketchips.game.requests.REQUEST_STATUS
+import com.arnyminerz.pocketchips.game.requests.Request
+import com.arnyminerz.pocketchips.game.response.GameStatus
 import com.arnyminerz.pocketchips.utils.async
-import com.arnyminerz.pocketchips.utils.context
 import com.arnyminerz.pocketchips.utils.get
 import com.arnyminerz.pocketchips.utils.remove
 import com.arnyminerz.pocketchips.utils.set
-import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.AdvertisingOptions
 import com.google.android.gms.nearby.connection.ConnectionInfo
 import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback
@@ -32,9 +34,6 @@ class HostConnectionsManager(application: Application) : ConnectionsManager(appl
     companion object {
         private const val TAG = "HostConnectionsManager"
     }
-
-    /** Provides access to the Nearby Connections API lazily. */
-    private val connectionsClient by lazy { Nearby.getConnectionsClient(context) }
 
     private val connectionLifecycleCallback = object : ConnectionLifecycleCallback() {
         override fun onConnectionInitiated(endpointId: String, connectionInfo: ConnectionInfo) {
@@ -85,6 +84,8 @@ class HostConnectionsManager(application: Application) : ConnectionsManager(appl
                 val bytes: ByteArray = payload.asBytes()!!
                 onPayloadReceived?.invoke(endpointId, bytes)
                 connectedEndpointsMutable.get(connectedEndpointsLock, endpointId)?.postValue(bytes)
+
+                processReceivedPayload(endpointId, bytes.deserialize())
             }
         }
 
@@ -260,5 +261,19 @@ class HostConnectionsManager(application: Application) : ConnectionsManager(appl
      */
     fun sendPayload(endpointId: String, obj: Serializable) {
         sendPayload(endpointId, obj.serialize())
+    }
+
+    /**
+     * Processes some received payload, and gives answer if necessary.
+     */
+    private fun processReceivedPayload(endpointId: String, payload: SerializedObject) {
+        val request = payload.deserializeOrNull<Request<*, *>, Request.Companion>()
+        val shouldGiveResponse: Serializable? = when (request?.name) {
+            REQUEST_STATUS -> GameStatus.Waiting
+            else -> null
+        }
+        shouldGiveResponse?.let {
+            sendPayload(endpointId, it)
+        }
     }
 }

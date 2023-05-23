@@ -7,7 +7,11 @@
 
         <variable
             name="model"
-            type="com.arnyminerz.pocketchips.connections.ClientConnectionsManager" />
+            type="com.arnyminerz.pocketchips.connections.ClientSetupManager" />
+
+        <variable
+            name="activity"
+            type="com.arnyminerz.pocketchips.activity.DemoClientActivity" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -131,6 +135,7 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginBottom="8dp"
                     android:enabled="@{model.connectedTo != null}"
+                    android:onClick="@{() -> activity.launchGame()}"
                     android:text="Launch App" />
 
             </LinearLayout>

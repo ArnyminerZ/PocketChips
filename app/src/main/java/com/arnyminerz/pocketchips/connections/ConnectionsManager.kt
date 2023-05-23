@@ -12,6 +12,7 @@ import com.arnyminerz.pocketchips.storage.PREF_NAME
 import com.arnyminerz.pocketchips.storage.PrefStorage
 import com.arnyminerz.pocketchips.utils.async
 import com.arnyminerz.pocketchips.utils.context
+import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.Strategy
 import kotlinx.coroutines.flow.first
 
@@ -57,6 +58,9 @@ abstract class ConnectionsManager(application: Application): AndroidViewModel(ap
     }
 
     val allPermissionsGranted = MutableLiveData(false)
+
+    /** Provides access to the Nearby Connections API lazily. */
+    protected val connectionsClient by lazy { Nearby.getConnectionsClient(context) }
 
 
     /** The display name of the current device for advertising. */

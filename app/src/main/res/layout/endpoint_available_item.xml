@@ -13,7 +13,7 @@
 
         <variable
             name="model"
-            type="com.arnyminerz.pocketchips.connections.ClientConnectionsManager" />
+            type="com.arnyminerz.pocketchips.connections.ClientSetupManager" />
     </data>
 
     <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"

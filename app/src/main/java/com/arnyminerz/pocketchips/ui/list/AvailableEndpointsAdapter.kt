@@ -5,14 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.arnyminerz.pocketchips.connections.ClientConnectionsManager
+import com.arnyminerz.pocketchips.connections.ClientSetupManager
 import com.arnyminerz.pocketchips.databinding.EndpointAvailableItemBinding
-import com.arnyminerz.pocketchips.databinding.EndpointAwaitingItemBinding
-import com.google.android.gms.nearby.connection.ConnectionInfo
 import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo
 
 class AvailableEndpointsAdapter(
-    private val viewModel: ClientConnectionsManager
+    private val viewModel: ClientSetupManager
 ) : ListAdapter<Pair<String, DiscoveredEndpointInfo>, AvailableEndpointsAdapter.VH>(
     object : DiffUtil.ItemCallback<Pair<String, DiscoveredEndpointInfo>>() {
         override fun areContentsTheSame(
@@ -39,7 +37,7 @@ class AvailableEndpointsAdapter(
 
 
     class VH(
-        private val viewModel: ClientConnectionsManager,
+        private val viewModel: ClientSetupManager,
         private val binding: EndpointAvailableItemBinding
     ) : ViewHolder(binding.root) {
         fun bind(endpointId: String, endpointInfo: DiscoveredEndpointInfo) {

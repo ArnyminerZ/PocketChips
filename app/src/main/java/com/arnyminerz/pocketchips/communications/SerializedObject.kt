@@ -1,5 +1,6 @@
 package com.arnyminerz.pocketchips.communications
 
+import android.content.Intent
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.Companion.PRIVATE
 import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback
@@ -46,7 +47,7 @@ data class SerializedObject(
         return false
     }
 
-    override fun hashCode(): Int= data.hashCode()
+    override fun hashCode(): Int = data.hashCode()
 
     /**
      * Gets the value stored at [key].
@@ -58,11 +59,17 @@ data class SerializedObject(
      * Tries deserializing `this` using the given serializer type. Note that the serializer must
      * be an Object (`companion object`).
      */
-    inline fun <T: Any, reified S: Serializer<T>> deserializeOrNull(): T? {
+    inline fun <T : Any, reified S : Serializer<T>> deserializeOrNull(): T? {
         // Use reflection to access the companion
         val serializer = S::class.objectInstance
         // Run deserialization
-        return serializer?.fromSerializedObject(this)
+        return try {
+            serializer?.fromSerializedObject(this)
+        } catch (e: NoSuchElementException) {
+            null
+        } catch (e: NumberFormatException) {
+            null
+        }
     }
 }
 
@@ -105,7 +112,10 @@ fun ByteArray.deserialize(): SerializedObject =
  * @param serializedObject The Payload to be sent.
  * @return [Task] to access the status of the operation when available.
  */
-fun ConnectionsClient.sendPayload(endpointIds: List<String>, serializedObject: SerializedObject): Task<Void> {
+fun ConnectionsClient.sendPayload(
+    endpointIds: List<String>,
+    serializedObject: SerializedObject
+): Task<Void> {
     val payload = Payload.fromBytes(serializedObject.bytes)
     return sendPayload(endpointIds, payload)
 }
@@ -129,7 +139,21 @@ fun ConnectionsClient.sendPayload(endpointIds: List<String>, serializedObject: S
  * @param serializedObject The Payload to be sent.
  * @return [Task] to access the status of the operation when available.
  */
-fun ConnectionsClient.sendPayload(endpointId: String, serializedObject: SerializedObject): Task<Void> {
+fun ConnectionsClient.sendPayload(
+    endpointId: String,
+    serializedObject: SerializedObject
+): Task<Void> {
     val payload = Payload.fromBytes(serializedObject.bytes)
     return sendPayload(endpointId, payload)
 }
+
+inline fun <T : Serializable, reified S : Serializer<T>> Intent.getSerializedExtra(name: String): T? {
+    if (!hasExtra(name)) return null
+    val bytes = getByteArrayExtra(name) ?: return null
+    val obj = bytes.deserialize()
+
+    return S::class.objectInstance?.fromSerializedObject(obj)
+}
+
+fun <T : Serializable> Intent.putExtra(name: String, value: T) =
+    putExtra(name, value.serialize().bytes)
