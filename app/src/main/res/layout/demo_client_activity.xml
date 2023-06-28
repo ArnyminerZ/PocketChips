@@ -19,6 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="#90ee90"
         tools:context=".activity.DemoClientActivity">
 
         <LinearLayout
@@ -33,6 +34,7 @@
                 android:layout_weight="1"
                 android:enabled="@{!model.isDiscovering() &amp;&amp; model.allPermissionsGranted &amp;&amp; !model.operationPending &amp;&amp; model.connectedTo == null}"
                 android:onClick="@{() -> model.startDiscovery()}"
+                android:backgroundTint="#E0B0FF"
                 android:text="Start Discovery" />
 
             <com.google.android.material.button.MaterialButton
@@ -42,6 +44,7 @@
                 android:layout_weight="1"
                 android:enabled="@{model.isDiscovering() &amp;&amp; model.allPermissionsGranted &amp;&amp; !model.operationPending &amp;&amp; model.connectedTo == null}"
                 android:onClick="@{() -> model.stopDiscovery()}"
+                android:backgroundTint="#E0B0FF"
                 android:text="Stop Discovery" />
         </LinearLayout>
 
@@ -74,6 +77,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
             android:layout_marginTop="8dp"
+            android:textColor="#B8860B"
             android:text="Available devices" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -82,6 +86,7 @@
             android:layout_height="0dp"
             android:layout_marginHorizontal="8dp"
             android:layout_marginVertical="4dp"
+            android:textColor="#B8860B"
             android:layout_weight="1" />
 
         <TextView
@@ -99,6 +104,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="#90ee90"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -136,7 +142,8 @@
                     android:layout_marginBottom="8dp"
                     android:enabled="@{model.connectedTo != null}"
                     android:onClick="@{() -> activity.launchGame()}"
-                    android:text="Launch App" />
+                    android:backgroundTint="#E0B0FF"
+                android:text="Launch App" />
 
             </LinearLayout>
 

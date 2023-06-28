@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:layout_marginHorizontal="16dp">
+    android:background="#90ee90">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/launch_client"
@@ -14,6 +14,8 @@
         android:layout_height="wrap_content"
         android:paddingVertical="24dp"
         android:layout_marginBottom="8dp"
+        android:backgroundTint="#E0B0FF"
+        android:layout_marginHorizontal="16dp"
         android:text="Client" />
 
     <com.google.android.material.button.MaterialButton
@@ -22,6 +24,8 @@
         android:layout_width="match_parent"
         android:layout_height="88dp"
         android:layout_marginBottom="8dp"
+        android:backgroundTint="#E0B0FF"
+        android:layout_marginHorizontal="16dp"
         android:text="Host" />
 
 </LinearLayout>

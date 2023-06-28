@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="#90ee90"
         tools:context=".activity.DemoHostActivity">
 
         <LinearLayout
@@ -29,6 +30,7 @@
                 android:layout_weight="1"
                 android:enabled="@{!model.isAdvertising() &amp;&amp; model.allPermissionsGranted &amp;&amp; !model.operationPending}"
                 android:onClick="@{() -> model.startAdvertising()}"
+                android:backgroundTint="#E0B0FF"
                 android:text="Start Advertising" />
 
             <com.google.android.material.button.MaterialButton
@@ -38,6 +40,7 @@
                 android:layout_weight="1"
                 android:enabled="@{model.isAdvertising() &amp;&amp; model.allPermissionsGranted &amp;&amp; !model.operationPending}"
                 android:onClick="@{() -> model.stopAdvertising()}"
+                android:backgroundTint="#E0B0FF"
                 android:text="Stop Advertising" />
         </LinearLayout>
 
@@ -74,6 +77,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="end"
+            android:backgroundTint="#E0B0FF"
             android:text="Launch App" />
 
     </LinearLayout>
