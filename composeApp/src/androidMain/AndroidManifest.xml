@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="UnusedAttribute">
+
+    <!-- Required for Nearby Connections -->
+    <!--
+    These permissions must be asked during runtime:
+    - ACCESS_FINE_LOCATION: 29..31
+    - BLUETOOTH_ADVERTISE: 31..
+    - BLUETOOTH_CONNECT: 31..
+    - BLUETOOTH_SCAN: 31..
+    -->
+    <!--<uses-permission
+        android:name="android.permission.ACCESS_WIFI_STATE"
+        android:maxSdkVersion="31" />
+    <uses-permission
+        android:name="android.permission.CHANGE_WIFI_STATE"
+        android:maxSdkVersion="31" />-->
+    <!-- In theory only required for SDK <= 31, but seems to be required in the Nearby library -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" />
+    <!--<uses-permission
+        android:name="android.permission.ACCESS_COARSE_LOCATION"
+        android:maxSdkVersion="28"
+        android:usesPermissionFlags="neverForLocation" />-->
+    <!-- In theory only required for SDK <= 28, but seems to be required in the Nearby library -->
+    <uses-permission
+        android:name="android.permission.ACCESS_COARSE_LOCATION"
+        android:usesPermissionFlags="neverForLocation" />
+    <!-- In theory only required for SDK 29..31, but seems to be required in the Nearby library -->
+    <!--<uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:maxSdkVersion="31"
+        android:minSdkVersion="29"
+        android:usesPermissionFlags="neverForLocation" />-->
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:usesPermissionFlags="neverForLocation" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_ADVERTISE"
+        android:minSdkVersion="31" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_CONNECT"
+        android:minSdkVersion="31" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:minSdkVersion="31"
+        android:usesPermissionFlags="neverForLocation" />
+    <uses-permission
+        android:name="android.permission.NEARBY_WIFI_DEVICES"
+        android:minSdkVersion="33" />
+
+    <uses-feature android:name="android.hardware.bluetooth" />
+
+    <application
+        android:name=".AppBase"
+        android:allowBackup="true"
+        android:enableOnBackInvokedCallback="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.Material.Light.NoActionBar"
+        tools:ignore="UnusedAttribute">
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Context provider -->
+        <provider
+            android:name=".ContextProvider"
+            android:authorities="${applicationId}.android.ContextProvider"
+            android:exported="false" />
+    </application>
+
+</manifest>

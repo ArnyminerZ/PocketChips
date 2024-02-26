@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+    <!-- Generic Strings -->
+    <string name="next">Next</string>
+    <string name="done">Done</string>
+    <string name="back">Back</string>
+    <string name="close">Close</string>
+    <string name="save">Save</string>
+    <string name="show_password">Show Password</string>
+    <string name="hide_password">Hide Password</string>
+    <string name="validation_email">Please, introduce a valid email address.</string>
+
+    <!-- Onboarding Screen -->
+    <string name="intro_welcome_title">Welcome to PocketChips</string>
+    <string name="intro_welcome_message">We hope you have a great experience using our app</string>
+    <string name="intro_safety_title">Be careful</string>
+    <string name="intro_safety_message_1">Before diving into the thrilling world of poker chip simulation on our app, we want to remind you of the potential risks associated with betting. Gambling should always be approached with caution, and it's essential to set limits and play responsibly.</string>
+    <string name="intro_safety_message_2">We're dedicated to providing a fun and entertaining experience without any of the real-world financial risks. Our app strictly prohibits the use of real money. Instead, we offer a virtual platform where you can enjoy the excitement of poker without any monetary involvement.</string>
+    <string name="intro_final_title">Ready to play?</string>
+    <string name="intro_final_message">Grab your deck and let's deal!</string>
+
+    <!-- Game Creation Screen -->
+    <string name="create_game_title">Create new Game</string>
+    <string name="create_game_message">Please, prepare all the devices that are going to join the game. Once you are ready and with this screen open, tap the Pair button.</string>
+    <string name="create_game_pair">Pair</string>
+    <string name="create_game_advertising">Advertising</string>
+    <string name="create_game_discovering">Discovering</string>
+    <string name="create_game_pairing">Pairing</string>
+    <string name="create_game_single">Use this device</string>
+    <string name="create_game_players_title">Players List</string>
+    <string name="create_game_players_virtual">All the extra players you add will be controlled from this device.</string>
+    <string name="create_game_player_edit_title">Edit Player</string>
+    <string name="create_game_player_edit_host_message">Modify your parameters. Everything will also be saved for your next game.</string>
+    <string name="create_game_player_edit_virtual_message">Modify the parameters of this user. It's a virtual user, it will be controlled from this device.</string>
+    <string name="create_game_create">Create</string>
+</resources>

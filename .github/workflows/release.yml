@@ -1,0 +1,78 @@
+name: Release Binaries
+
+on:
+  release:
+
+jobs:
+  build-android:
+    name: Build for Android
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+          java-package: jdk
+          cache: 'gradle'
+
+      - name: Decode Keystore
+        run: |
+          echo ${{ secrets.KEYSTORE_BASE64 }} > keystore.txt
+          base64 --decode keystore.txt > keystore.jks
+
+      - name: Write local.properties
+        run: echo '${{ secrets.LOCAL_PROPERTIES }}' > local.properties
+
+      - name: Build AAB
+        id: build_aab
+        env:
+          KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
+          KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: ./gradlew :composeApp:increaseVersionCode :composeApp:bundleRelease :composeApp:assembleRelease
+
+      - name: Release AAB & APK
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            ./composeApp/build/outputs/**/*.aab
+            ./composeApp/build/outputs/**/*.apk
+
+  build-desktop:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    name: Build for Desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Write local.properties
+        run: echo '${{ secrets.LOCAL_PROPERTIES }}' > local.properties
+
+      - name: Build
+        run: ./gradlew :composeApp:packageReleaseDistributionForCurrentOS
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            composeApp/build/compose/binaries/main-release/**/*.dmg
+            composeApp/build/compose/binaries/main-release/**/*.msi
+            composeApp/build/compose/binaries/main-release/**/*.deb
